@@ -27,8 +27,12 @@ class SetCommand extends Command {
     }
 
     // Check if argument is met.
-    if(!args.number) {
+    if(!args.number && args.number !== 0) {
       message.reply('You can only set your number to a number.');
+      return;
+    }
+    if(!isFinite(args.number)) {
+      message.reply('Finite numbers only.');
       return;
     }
 

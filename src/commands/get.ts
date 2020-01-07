@@ -29,7 +29,7 @@ class GetCommand extends Command {
     // Send message.
     return message.channel.send({embed: {
       title: 'Your Number',
-      description: number,
+      description: `${number}`,
       color: 0x2FC446
     }});
   }
