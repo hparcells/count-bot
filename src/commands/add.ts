@@ -1,12 +1,15 @@
-import { Command, Argument } from 'discord-akairo';
+import { Command } from 'discord-akairo';
 import { Message } from 'discord.js';
+import r from 'rethinkdb';
 
 import { db, runDb } from '../database';
 
-class SetCommand extends Command {
+import { Account } from '../types';
+
+class AddCommand extends Command {
   constructor() {
-    super('set', {
-      aliases: ['set'],
+    super('add', {
+      aliases: ['add'],
       args: [
         {
           id: 'number',
@@ -32,17 +35,19 @@ class SetCommand extends Command {
       // Acc to database.
       await runDb(db().table('numbers').insert({
         id: message.author.id,
-        number: 0
+        number: args.number
       }));
     }
 
     // Update the number in the database.
-    await runDb(db().table('numbers').get(message.author.id).update({ number: args.number }));
+    await runDb(db().table('numbers').get(message.author.id).update({ number: r.row('number').add(args.number) }));
+
+    const account: Account = await runDb(db().table('numbers').get(message.author.id));
 
     // Send the message.
     return message.channel.send({embed: {
       title: 'Number Updated!',
-      description: `Your number has been updated to: \`${args.number}\`.`,
+      description: `Your number has been updated to: \`${account?.number}\`.`,
       thumbnail: {
         url: 'https://images.emojiterra.com/twitter/v12/512px/1f44d.png'
       },
@@ -51,4 +56,4 @@ class SetCommand extends Command {
   }
 }
 
-export default SetCommand;
+export default AddCommand;
