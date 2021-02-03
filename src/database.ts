@@ -8,7 +8,7 @@ export let connection: r.Connection;
 
 /** Connects to the database and sets everything up. */
 export async function connectToDatabase() {
-  connection = await r.connect({ host: 'localhost', port: 28015 });
+  connection = await r.connect({ host: process.env.RETHINKDB_HOST, port: 28015, user: process.env.USER, password: process.env.PASSWORD });
 
   // Check if the database exists. If not, create it.
   if(!(await r.dbList().run(connection)).includes(DB_NAME)) {
